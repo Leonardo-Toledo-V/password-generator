@@ -1,44 +1,110 @@
-import React from "react";
+import React, {useState} from "react";
 import "./App.css";
 import img from "./img/logo.png";
 import styled from "styled-components";
 import {BotonDisminuir, BotonIncrementar, BotonCheck, BotonGenerar} from "./components/botones";
+import generarPassword from "./funciones/generarPassword";
+
 
 const App = () => {
+
+  const [configuracion, cambiarConfiguracion] =  useState({
+    numeroDeCaracteres: 7,
+    simbolos: true,
+    numeros: true,
+    mayusculas: true
+  });
+
+
+  const [passwordGenerada, cambiarPasswordGenerada] = useState('sjififkmaa');
+
+
+  const disminuirNumeroCaracteres =() =>{
+
+    if (configuracion.numeroDeCaracteres > 1) {
+      cambiarConfiguracion((configuracionAnterior)=>{
+        const nuevaConfiguracion = {...configuracionAnterior}
+        nuevaConfiguracion.numeroDeCaracteres -= 1;
+        return nuevaConfiguracion;
+      });
+    }
+
+}
+
+  const incrementarNumeroCaracteres =() =>{
+      cambiarConfiguracion((configuracionAnterior)=>{
+        const nuevaConfiguracion = {...configuracionAnterior}
+        nuevaConfiguracion.numeroDeCaracteres += 1;
+        return nuevaConfiguracion;
+      });
+  }
+
+
+  const toggleSimbolos=()=>{
+    cambiarConfiguracion((configuracionAnterior)=>{
+      const nuevaConfiguracion = {...configuracionAnterior}
+      nuevaConfiguracion.simbolos = !nuevaConfiguracion.simbolos;
+      return nuevaConfiguracion;
+    });
+  }
+  const toggleNumeros=()=>{
+    cambiarConfiguracion((configuracionAnterior)=>{
+      const nuevaConfiguracion = {...configuracionAnterior}
+      nuevaConfiguracion.numeros = !nuevaConfiguracion.numeros;
+      return nuevaConfiguracion;
+    });
+  }
+
+  const toggleMayusculas=()=>{
+    cambiarConfiguracion((configuracionAnterior)=>{
+      const nuevaConfiguracion = {...configuracionAnterior}
+      nuevaConfiguracion.mayusculas = !nuevaConfiguracion.mayusculas;
+      return nuevaConfiguracion;
+    });
+  }
+
+
+
+  const onSubmit =(e)=>{
+    e.preventDefault();
+    cambiarPasswordGenerada (generarPassword(configuracion));
+
+  }
+
   return (
     <div className="contenedor">
       <Logo>
         <img src={img} alt="" />
       </Logo>
 
-      <form>
+      <form onSubmit={onSubmit}>
         <Fila>
           <label>Numero de caracteres:</label>
           <Controles>
-            <BotonDisminuir/>
-            <span>0</span>
-            <BotonIncrementar/>
+            <BotonDisminuir click={disminuirNumeroCaracteres}/>
+            <span>{configuracion.numeroDeCaracteres}</span>
+            <BotonIncrementar click={incrementarNumeroCaracteres}/>
           </Controles>
         </Fila>
 
         <Fila>
           <label>¿Incluir símbolos?</label>
-            <BotonCheck/>
+            <BotonCheck seleccionado={configuracion.simbolos} click={toggleSimbolos}/>
         </Fila>
 
         <Fila>
           <label>¿Incluir números?</label>
-            <BotonCheck/>
+            <BotonCheck seleccionado={configuracion.numeros} click={toggleNumeros}/>
         </Fila>
 
         <Fila>
           <label>¿Incluir mayúsculas?</label>
-            <BotonCheck/>
+            <BotonCheck seleccionado={configuracion.mayusculas} click={toggleMayusculas}/>
         </Fila>
 
         <Fila>
           <BotonGenerar/>
-          <Input type="text" readOnly="true"/>
+          <Input type="text" readOnly={true} value={passwordGenerada}/>
         </Fila>
 
       </form>
